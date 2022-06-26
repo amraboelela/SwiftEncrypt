@@ -11,8 +11,7 @@ import CommonCrypto
 
 extension String {
     
-    public static let base32Codes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
-    "G", "H", "J", "K", "M", "N", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+    public static let base32Codes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "M", "N", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     public static let base32ForbiddenLetters: Set<String> = ["I", "L", "O", "P"]
     public static let base32DecodeMap = ["0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "A": 10, "B": 11, "C": 12, "D": 13, "E": 14, "F": 15, "G": 16, "H": 17, "J": 18, "K": 19, "M": 20, "N": 21, "Q": 22, "R": 23, "S": 24, "T": 25, "U": 26, "V": 27, "W": 28, "X": 29, "Y": 30, "Z": 31]
     
@@ -45,23 +44,17 @@ extension String {
     // numberOfDigits: Number of base32 digits required.
     public func hashBase32(numberOfDigits: Int) -> String {
         let md5Data = MD5(string: self)
-        let maxNumberOfDigits = md5Data.count * 8 / 5
-        let theNumberOfDigits = numberOfDigits < maxNumberOfDigits ? numberOfDigits : maxNumberOfDigits
-        let theNumberOfBytes = theNumberOfDigits * 5 / 8
-        var index = md5Data.count - theNumberOfBytes
-        var buffer: UInt64 = 0
-        var count = 0
+        var dataIndex = md5Data.count - 1
         var result = ""
-        while index < md5Data.count && count < 8 {
-            buffer = buffer | UInt64(md5Data[index])
-            buffer = buffer << 8
-            count += 1
-            index += 1
+        while dataIndex >= 0 && result.count < numberOfDigits {
+            let base32Index = Int(md5Data[dataIndex] & 0b11111)
+            result = String.base32Codes[base32Index] + result
+            dataIndex -= 1
         }
-        return result
+        return result.lowercased()
     }
     
-    public static func nextLetter(_ letter: String) -> String {
+    public static func base32NextLetter(_ letter: String) -> String {
 
         // Check if string is build from exactly one Unicode scalar:
         guard let uniCode = UnicodeScalar(letter) else {
@@ -72,7 +65,7 @@ extension String {
             if let unicodeScalar = UnicodeScalar(uniCode.value + 1) {
                 let nextChar = String(unicodeScalar)
                 if base32ForbiddenLetters.contains(nextChar) {
-                    return nextLetter(nextChar)
+                    return base32NextLetter(nextChar)
                 } else {
                     return nextChar
                 }
