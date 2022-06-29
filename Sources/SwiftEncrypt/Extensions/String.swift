@@ -15,6 +15,16 @@ extension String {
     public static let base32ForbiddenLetters: Set<String> = ["I", "L", "O", "P"]
     public static let base32DecodeMap = ["0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "A": 10, "B": 11, "C": 12, "D": 13, "E": 14, "F": 15, "G": 16, "H": 17, "J": 18, "K": 19, "M": 20, "N": 21, "Q": 22, "R": 23, "S": 24, "T": 25, "U": 26, "V": 27, "W": 28, "X": 29, "Y": 30, "Z": 31]
     
+    public var htmlEncoded: String {
+        var returnStr: String = self
+        returnStr = returnStr.replacingOccurrences(of: "&", with: "&amp;")
+        returnStr = returnStr.replacingOccurrences(of: "'", with: "&#39")
+        returnStr = returnStr.replacingOccurrences(of: "<", with: "&lt;")
+        returnStr = returnStr.replacingOccurrences(of: ">", with: "&gt;")
+
+        return returnStr
+    }
+
     func MD5(string: String) -> Data {
         let length = Int(CC_MD5_DIGEST_LENGTH)
         let messageData = string.data(using:.utf8)!

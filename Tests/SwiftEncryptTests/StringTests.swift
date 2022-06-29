@@ -11,6 +11,12 @@ final class StringTests: TestsBase {
         super.tearDown()
     }
     
+    func testHtmlEncoded() {
+        let aString = "/wiki/index.php?title=Main_Page&printable=yes"
+        let htmlEncodedString = aString.htmlEncoded
+        XCTAssertEqual(htmlEncodedString, "/wiki/index.php?title=Main_Page&amp;printable=yes")
+    }
+    
     func testHashBase16() {
         let url = "http://massive.net"
         XCTAssertEqual(url.hashBase16(numberOfDigits: 16), "6c8b26c7c67a3071")
